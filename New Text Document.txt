@@ -1,0 +1,118 @@
+Lab 5-1
+Questions
+1. What is the address of DllMain?
+Ans: 1000D02E
+-----------------------------------------------
+2. Use the Imports window to browse to gethostbyname. Where is the import
+located?
+Ans: 100163CC
+-----------------------------------------------
+
+3. How many functions call gethostbyname?
+Ans: 18
+-----------------------------------------------
+
+4. Focusing on the call to gethostbyname located at 0x10001757, can you fig-
+ure out which DNS request will be made?
+Ans: "pics.praticalmalwareanalysis.com"
+-----------------------------------------------
+
+5. How many local variables has IDA Pro recognized for the subroutine at
+0x10001656?
+Ans: 23 variable with prefix "_var"
+-----------------------------------------------
+6. How many parameters has IDA Pro recognized for the subroutine at
+0x10001656?
+Ans: 1 parameter named "lpThreadParameter"
+-----------------------------------------------
+7. Use the Strings window to locate the string \cmd.exe /c in the disassembly.
+Where is it located?
+Ans: 10095B34
+-----------------------------------------------
+8. What is happening in the area of code that references \cmd.exe /c?
+Ans: That code was preparing a command string with intent action after "/c" then does it and terminates
+-----------------------------------------------
+
+9. In the same area, at 0x100101C8, it looks like dword_1008E5C4 is a global
+variable that helps decide which path to take. How does the malware set
+dword_1008E5C4? (Hint: Use dword_1008E5C4’s cross-references.)
+
+Ans: The section 0x10001678 do the code "mov dword_1008E5C4, eax" to set the dword_1008E5C4 by value of register eax
+-----------------------------------------------
+
+10. A few hundred lines into the subroutine at 0x1000FF58, a series of com-
+parisons use memcmp to compare strings. What happens if the string compar-
+ison to robotwork is successful (when memcmp returns 0)?
+Ans: if memcmp return 0, it will call the function sub_100052A2 to do a dirty action, that will be register a new key into HKEY_LOCAL_MACHINE named "WorkTime"
+-----------------------------------------------
+
+11. What does the export PSLIST do?
+Ans: this export will call the function will retrieve OS version info of victim machine, and write data to file named xInstall.dll and create a socket to send this file through that.
+-----------------------------------------------
+
+12. Use the graph mode to graph the cross-references from sub_10004E79.
+Which API functions could be called by entering this function? Based on
+the API functions alone, what could you rename this function?
+
+Ans: The API functions are GetSystemDefaultLangID, sprintf, strlen.
+        Based on the API functions above, I will rename this function to "collectLanguageOfHost"
+-----------------------------------------------
+
+13. How many Windows API functions does DllMain call directly? How many
+at a depth of 2?
+Ans: 4
+        There are 3 API functions at a depth of 2
+-----------------------------------------------
+
+14. At 0x10001358, there is a call to Sleep (an API function that takes one
+parameter containing the number of milliseconds to sleep). Looking
+backward through the code, how long will the program sleep if this code
+executes?
+Ans: 
+add eax, 0Dh
+push eax
+call ds:atoi
+imul eax,3E8h
+pop ecx
+push eax
+call ds:Sleep
+
+From this code, it accept a variable named "aThisIsCTI30" with value 0 to eax register, then add a value 0Dh in Hex as well as 13 in decimal and push it into stack by push instruction then call atoi API functions to convert this to actually number then multify with 1000 (3E8 in Hex) to be a expected value with millisecond. And Sleep will sleep the system in 13 seconds.
+-----------------------------------------------
+
+15. At 0x10001701 is a call to socket. What are the three parameters?
+Ans: from stack, in a row, three parameters are 2,1,6
+-----------------------------------------------
+
+16. Using the MSDN page for socket and the named symbolic constants func-
+tionality in IDA Pro, can you make the parameters more meaningful?
+What are the parameters after you apply changes?
+Ans: Yes. After searching in MSDN page for socket, all the parameters of this socket function got to change to AF_INET,SOCK_STREAM,IPPROTO_TCP with corresponding value.
+-----------------------------------------------
+
+17. Search for usage of the in instruction (opcode 0xED). This instruction is
+used with a magic string VMXh to perform VMware detection. Is that in use
+in this malware? Using the cross-references to the function that executes
+the in instruction, is there further evidence of VMware detection?
+Ans: Yes, it appears at 100061DB. There are some further evidence of VMware detection such as sub function accept value named aFoundVirtualMa when the function contain in instruction return true. And something I'd ever discovered.
+-----------------------------------------------
+
+18. Jump your cursor to 0x1001D988. What do you find?
+Ans: the data with value 2D in Hex
+-----------------------------------------------
+
+19. If you have the IDA Python plug-in installed (included with the com-
+mercial version of IDA Pro), run Lab05-01.py, an IDA Pro Python script
+
+provided with the malware for this book. (Make sure the cursor is at
+0x1001D988.) What happens after you run the script?
+Ans:
+-----------------------------------------------
+
+20. With the cursor in the same location, how do you turn this data into a
+single ASCII string?
+-----------------------------------------------
+
+21. Open the script with a text editor. How does it work?
+
+-----------------------------------------------
